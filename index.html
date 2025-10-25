@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoodWisher - Create Beautiful Greeting Cards</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --secondary: #f59e0b;
+            --accent: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --border-radius: 16px;
+            --border-radius-sm: 8px;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .dark-mode {
+            --light: #1e293b;
+            --dark: #f8fafc;
+            --gray: #94a3b8;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --gradient: linear-gradient(135deg, #4f46e5 0%, #7e22ce 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--gradient);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+            transition: var(--transition);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header Styles */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: white;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(15deg);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 1rem;
+        }
+
+        .logo-icon {
+            font-size: 3rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .logo h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #fff, #e3f2fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+            font-weight: 300;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+            font-weight: 300;
+        }
+
+        .welcome-message {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 800px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .welcome-message h2 {
+            color: white;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .welcome-message p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .versions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .version-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .dark-mode .version-card {
+            background: rgba(30, 41, 59, 0.95);
+        }
+
+        .version-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .version-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .version-badge {
+            display: inline-block;
+            padding: 0.5rem 1.2rem;
+            background: var(--primary);
+            color: white;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .version-badge.recommended {
+            background: linear-gradient(45deg, var(--success), #34d399);
+        }
+
+        .version-badge.advanced {
+            background: linear-gradient(45deg, #8b5cf6, #a78bfa);
+        }
+
+        .version-badge.enhanced {
+            background: linear-gradient(45deg, var(--primary), var(--primary-light));
+        }
+
+        .version-badge.basic {
+            background: linear-gradient(45deg, var(--gray), #94a3b8);
+        }
+
+        .version-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .version-card p {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .version-features {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .version-features li {
+            padding: 0.5rem 0;
+            padding-left: 1.8rem;
+            position: relative;
+            color: var(--dark);
+        }
+
+        .version-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, var(--primary), var(--primary-light));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 111, 165, 0.4);
+        }
+
+        .btn-recommended {
+            background: linear-gradient(45deg, var(--success), #34d399);
+        }
+
+        .btn-recommended:hover {
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-share {
+            background: linear-gradient(45deg, var(--accent), #f472b6);
+        }
+
+        .btn-share:hover {
+            box-shadow: 0 5px 15px rgba(236, 72, 153, 0.4);
+        }
+
+        .btn-rate {
+            background: linear-gradient(45deg, var(--warning), #fbbf24);
+        }
+
+        .btn-rate:hover {
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-full {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary);
+        }
+
+        .copyright {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--light);
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        /* Share Options */
+        .share-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .share-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .dark-mode .share-option {
+            background: var(--dark);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .share-option:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary);
+        }
+
+        .share-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Rating System */
+        .rating-container {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .rating-title {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            color: var(--dark);
+        }
+
+        .rating-stars {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .rating-star {
+            font-size: 2rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .rating-star:hover,
+        .rating-star.active {
+            color: var(--warning);
+            transform: scale(1.2);
+        }
+
+        .rating-percentages {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .rating-comment {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 1rem;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .dark-mode .rating-comment {
+            background: var(--dark);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--light);
+        }
+
+        .feedback-submitted {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .feedback-title {
+            font-size: 1.5rem;
+            color: var(--success);
+            margin-bottom: 0.5rem;
+        }
+
+        .feedback-message {
+            color: var(--gray);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .logo h1 {
+                font-size: 2.5rem;
+            }
+            
+            .versions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .version-card {
+                padding: 2rem;
+            }
+            
+            .header {
+                margin-bottom: 2rem;
+            }
+            
+            .welcome-message {
+                padding: 1.5rem;
+                margin: 1rem auto;
+            }
+            
+            .share-options {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo h1 {
+                font-size: 2rem;
+            }
+            
+            .logo-icon {
+                font-size: 2.5rem;
+            }
+            
+            .version-card {
+                padding: 1.5rem;
+            }
+            
+            .tagline {
+                font-size: 1.1rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .share-options {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animation for cards */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .version-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .version-card:nth-child(1) { animation-delay: 0.1s; }
+        .version-card:nth-child(2) { animation-delay: 0.2s; }
+        .version-card:nth-child(3) { animation-delay: 0.3s; }
+        .version-card:nth-child(4) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <div class="logo">
+                <span class="logo-icon">🎉</span>
+                <h1>GoodWisher</h1>
+            </div>
+            <p class="tagline">Create Beautiful Greeting Cards in Seconds</p>
+            <p class="subtitle">Perfect for birthdays, anniversaries, holidays, and special occasions</p>
+        </header>
+
+        <div class="welcome-message">
+            <h2>Welcome to GoodWisher! 🎊</h2>
+            <p>Choose the version that works best for you. Whether you want AI-powered messages, beautiful templates, or a simple card creator, we've got you covered!</p>
+        </div>
+
+        <div class="versions-grid">
+            <!-- Recommended Version -->
+            <div class="version-card">
+                <span class="version-badge recommended">Recommended</span>
+                <h2>Complete Experience</h2>
+                <p>Our most powerful version with all features unlocked</p>
+                <ul class="version-features">
+                    <li>AI-powered message writing</li>
+                    <li>Beautiful card templates</li>
+                    <li>Easy sharing with friends</li>
+                    <li>Works on all devices</li>
+                    <li>Custom colors & themes</li>
+                    <li>Instant preview</li>
+                </ul>
+                <a href="v1.html" class="btn btn-recommended btn-full">
+                    <span>Get Started Now</span>
+                    🚀
+                </a>
+            </div>
+
+            <!-- Advanced Features -->
+            <div class="version-card">
+                <span class="version-badge advanced">AI Powered</span>
+                <h2>Smart Messages</h2>
+                <p>Let AI help you write the perfect greeting</p>
+                <ul class="version-features">
+                    <li>AI message assistant</li>
+                    <li>Smart writing suggestions</li>
+                    <li>Multiple writing styles</li>
+                    <li>Message improvement</li>
+                    <li>Quick customization</li>
+                    <li>Creative ideas</li>
+                </ul>
+                <a href="v3.html" class="btn btn-full">
+                    <span>Try AI Features</span>
+                    ✨
+                </a>
+            </div>
+
+            <!-- Enhanced Version -->
+            <div class="version-card">
+                <span class="version-badge enhanced">Beautiful Designs</span>
+                <h2>Template Gallery</h2>
+                <p>Choose from stunning card designs</p>
+                <ul class="version-features">
+                    <li>8 beautiful templates</li>
+                    <li>Easy template browser</li>
+                    <li>Social media sharing</li>
+                    <li>Shareable links</li>
+                    <li>Multiple platforms</li>
+                    <li>Clean interface</li>
+                </ul>
+                <a href="v2.html" class="btn btn-full">
+                    <span>Browse Templates</span>
+                    🎨
+                </a>
+            </div>
+
+            <!-- Basic Version -->
+            <div class="version-card">
+                <span class="version-badge basic">Simple & Easy</span>
+                <h2>Quick Creator</h2>
+                <p>Fast and straightforward card making</p>
+                <ul class="version-features">
+                    <li>Mobile-friendly design</li>
+                    <li>Message categories</li>
+                    <li>Custom colors</li>
+                    <li>Instant preview</li>
+                    <li>Easy to use</li>
+                    <li>No setup required</li>
+                </ul>
+                <a href="v1.html" class="btn btn-full">
+                    <span>Create Simple Card</span>
+                    📱
+                </a>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-links">
+                <a href="https://github.com/mashifmj-prog/goodwisher-dev2">GitHub Repository</a>
+                <a href="#" id="howToUse">How to Use</a>
+                <a href="#" id="rateApp">Rate App</a>
+                <a href="#" id="sendFeedback">Send Feedback</a>
+            </div>
+            <p class="copyright">© 2025 GoodWisher. Create and share beautiful greeting cards with ease!</p>
+        </footer>
+    </div>
+
+    <!-- Share Modal -->
+    <div class="modal" id="shareModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Share Your Card</h3>
+                <button class="modal-close" id="shareModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="share-options">
+                    <div class="share-option" data-platform="device">
+                        <div class="share-icon"><i class="fas fa-share-alt"></i></div>
+                        <span>Share (Device)</span>
+                    </div>
+                    <div class="share-option" data-platform="whatsapp">
+                        <div class="share-icon"><i class="fab fa-whatsapp"></i></div>
+                        <span>WhatsApp</span>
+                    </div>
+                    <div class="share-option" data-platform="email">
+                        <div class="share-icon"><i class="fas fa-envelope"></i></div>
+                        <span>Email</span>
+                    </div>
+                    <div class="share-option" data-platform="copy">
+                        <div class="share-icon"><i class="fas fa-copy"></i></div>
+                        <span>Copy Link</span>
+                    </div>
+                </div>
+                <button class="btn btn-share btn-full" id="closeShare">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div class="modal" id="ratingModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Rate GoodWisher</h3>
+                <button class="modal-close" id="ratingModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="rating-container" id="ratingContainer">
+                    <div class="rating-title">How would you rate your experience?</div>
+                    <div class="rating-stars">
+                        <div class="rating-star" data-rating="1">★</div>
+                        <div class="rating-star" data-rating="2">★</div>
+                        <div class="rating-star" data-rating="3">★</div>
+                        <div class="rating-star" data-rating="4">★</div>
+                        <div class="rating-star" data-rating="5">★</div>
+                    </div>
+                    <div class="rating-percentages">
+                        <span>20%</span>
+                        <span>40%</span>
+                        <span>60%</span>
+                        <span>80%</span>
+                        <span>100%</span>
+                    </div>
+                    <textarea class="rating-comment" placeholder="Share your feedback (optional, max 200 characters)" maxlength="200"></textarea>
+                    <button class="btn btn-rate btn-full" id="submitRating">Submit Feedback</button>
+                </div>
+                <div class="feedback-submitted" id="feedbackSubmitted" style="display: none;">
+                    <div class="feedback-title">Submitted</div>
+                    <div class="feedback-message">Thank you for your feedback!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            if (document.body.classList.contains('dark-mode')) {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
+        });
+
+        // Modal functionality
+        const shareModal = document.getElementById('shareModal');
+        const ratingModal = document.getElementById('ratingModal');
+        const shareModalClose = document.getElementById('shareModalClose');
+        const ratingModalClose = document.getElementById('ratingModalClose');
+        const closeShare = document.getElementById('closeShare');
+        const rateApp = document.getElementById('rateApp');
+        const submitRating = document.getElementById('submitRating');
+        const ratingContainer = document.getElementById('ratingContainer');
+        const feedbackSubmitted = document.getElementById('feedbackSubmitted');
+        const ratingStars = document.querySelectorAll('.rating-star');
+
+        // Open modals
+        document.querySelectorAll('.btn-share').forEach(btn => {
+            btn.addEventListener('click', () => {
+                shareModal.classList.add('show');
+            });
+        });
+
+        rateApp.addEventListener('click', (e) => {
+            e.preventDefault();
+            ratingModal.classList.add('show');
+        });
+
+        // Close modals
+        [shareModalClose, closeShare].forEach(btn => {
+            btn.addEventListener('click', () => {
+                shareModal.classList.remove('show');
+            });
+        });
+
+        ratingModalClose.addEventListener('click', () => {
+            ratingModal.classList.remove('show');
+        });
+
+        // Close modals when clicking outside
+        [shareModal, ratingModal].forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                }
+            });
+        });
+
+        // Rating functionality
+        let currentRating = 0;
+
+        ratingStars.forEach(star => {
+            star.addEventListener('click', () => {
+                const rating = parseInt(star.getAttribute('data-rating'));
+                currentRating = rating;
+                
+                // Update stars
+                ratingStars.forEach((s, index) => {
+                    if (index < rating) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+            });
+
+            star.addEventListener('mouseover', () => {
+                const rating = parseInt(star.getAttribute('data-rating'));
+                
+                ratingStars.forEach((s, index) => {
+                    if (index < rating) {
+                        s.style.color = '#f59e0b';
+                    } else {
+                        s.style.color = '#ddd';
+                    }
+                });
+            });
+
+            star.addEventListener('mouseout', () => {
+                ratingStars.forEach((s, index) => {
+                    if (index < currentRating) {
+                        s.style.color = '#f59e0b';
+                    } else {
+                        s.style.color = '#ddd';
+                    }
+                });
+            });
+        });
+
+        // Submit rating
+        submitRating.addEventListener('click', () => {
+            if (currentRating === 0) {
+                alert('Please select a rating before submitting.');
+                return;
+            }
+            
+            ratingContainer.style.display = 'none';
+            feedbackSubmitted.style.display = 'block';
+            
+            setTimeout(() => {
+                ratingModal.classList.remove('show');
+                ratingContainer.style.display = 'block';
+                feedbackSubmitted.style.display = 'none';
+                
+                // Reset stars
+                ratingStars.forEach(star => {
+                    star.classList.remove('active');
+                    star.style.color = '#ddd';
+                });
+                currentRating = 0;
+                
+                // Clear comment
+                document.querySelector('.rating-comment').value = '';
+            }, 2000);
+        });
+
+        // Share functionality
+        document.querySelectorAll('.share-option').forEach(option => {
+            option.addEventListener('click', () => {
+                const platform = option.getAttribute('data-platform');
+                let message = '';
+                
+                switch(platform) {
+                    case 'device':
+                        message = 'Device sharing would be triggered here';
+                        if (navigator.share) {
+                            navigator.share({
+                                title: 'GoodWisher Card',
+                                text: 'Check out this greeting card I made with GoodWisher!',
+                                url: window.location.href,
+                            })
+                            .catch(error => console.log('Error sharing:', error));
+                        } else {
+                            alert('Web Share API not supported on this browser');
+                        }
+                        break;
+                    case 'whatsapp':
+                        message = 'WhatsApp sharing would be triggered here';
+                        window.open(`https://wa.me/?text=Check out this greeting card I made with GoodWisher! ${encodeURIComponent(window.location.href)}`, '_blank');
+                        break;
+                    case 'email':
+                        message = 'Email sharing would be triggered here';
+                        window.location.href = `mailto:?subject=Greeting Card from GoodWisher&body=Check out this greeting card I made with GoodWisher! ${encodeURIComponent(window.location.href)}`;
+                        break;
+                    case 'copy':
+                        message = 'Link copied to clipboard!';
+                        navigator.clipboard.writeText(window.location.href)
+                            .then(() => alert('Link copied to clipboard!'))
+                            .catch(err => alert('Failed to copy link: ' + err));
+                        break;
+                }
+                
+                // For demo purposes
+                if (platform !== 'copy') {
+                    setTimeout(() => {
+                        shareModal.classList.remove('show');
+                    }, 1500);
+                }
+            });
+        });
+
+        // Add interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.version-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Add click animation to buttons
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Create ripple effect
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.cssText = `
+                        position: absolute;
+                        border-radius: 50%;
+                        background: rgba(255, 255, 255, 0.6);
+                        transform: scale(0);
+                        animation: ripple 0.6s linear;
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${x}px;
+                        top: ${y}px;
+                    `;
+                    
+                    this.style.position = 'relative';
+                    this.style.overflow = 'hidden';
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+
+            // Add CSS for ripple animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes ripple {
+                    to {
+                        transform: scale(4);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>
